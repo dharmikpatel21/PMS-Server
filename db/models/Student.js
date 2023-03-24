@@ -4,6 +4,9 @@ const studentSchema = mongoose.Schema({
     enrollmentNo: { type: String, required: true },
     name: { type: String, required: true },
     email: { type: String, required: true },
+    department: { type: String, required: true },
+    cpi: { type: Number, required: true },
+    division: { type: String, required: true },
     registeredAt: { type: Date, default: Date.now() },
 });
 

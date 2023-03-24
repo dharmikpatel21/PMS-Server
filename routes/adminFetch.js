@@ -47,12 +47,52 @@ router.get("/students", varifyAdmin, async (req, res) => {
     }
 });
 
+router.post("/students", varifyAdmin, async (req, res) => {
+    const query = new RegExp(req.body.query, "i");
+    try {
+        const students = await Student.find({
+            $and: [
+                {
+                    $or: [
+                        { enrollmentNo: query },
+                        { name: query },
+                        { email: query },
+                        { department: query },
+                    ],
+                },
+            ],
+        });
+        res.send(students);
+    } catch (err) {
+        res.status(400).send({ error: "can't fetch student data" });
+    }
+});
+
 router.get("/jobs", varifyAdmin, async (req, res) => {
     try {
         const jobs = await Job.find({});
         res.send(jobs);
     } catch (err) {
         res.status(400).send({ error: "can't fetch jobs data" });
+    }
+});
+router.post("/jobs", varifyAdmin, async (req, res) => {
+    const query = new RegExp(req.body.query, "i");
+    try {
+        const jobs = await Job.find({
+            $and: [
+                {
+                    $or: [
+                        { name: query },
+                        { jobTitle: query },
+                        { location: query },
+                    ],
+                },
+            ],
+        });
+        res.json(jobs);
+    } catch (err) {
+        res.status(400).json({ error: "can't fetch jobs data" });
     }
 });
 
@@ -65,12 +105,53 @@ router.get("/jobapplications", varifyAdmin, async (req, res) => {
     }
 });
 
+router.post("/jobapplications", varifyAdmin, async (req, res) => {
+    const query = new RegExp(req.body.query, "i");
+    try {
+        const jobapplications = await AppliedJob.find({
+            $and: [
+                {
+                    $or: [
+                        { name: query },
+                        { studentemail: query },
+                        { jobTitle: query },
+                        { location: query },
+                    ],
+                },
+            ],
+        });
+        res.json(jobapplications);
+    } catch (err) {
+        res.status(400).json({ error: "can't fetch job applications data" });
+    }
+});
+
 router.get("/approvedjobs", varifyAdmin, async (req, res) => {
     try {
         const jobapprovals = await ApprovedJob.find({});
         res.send(jobapprovals);
     } catch (err) {
         res.status(400).send({ error: "can't fetch job approval data" });
+    }
+});
+router.post("/approvedjobs", varifyAdmin, async (req, res) => {
+    const query = new RegExp(req.body.query, "i");
+    try {
+        const jobapprovals = await ApprovedJob.find({
+            $and: [
+                {
+                    $or: [
+                        { name: query },
+                        { studentemail: query },
+                        { jobTitle: query },
+                        { location: query },
+                    ],
+                },
+            ],
+        });
+        res.json(jobapprovals);
+    } catch (err) {
+        res.status(400).json({ error: "can't fetch job approval data" });
     }
 });
 
