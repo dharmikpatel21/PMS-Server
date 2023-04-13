@@ -46,7 +46,7 @@ router.get("/students", varifyAdmin, async (req, res) => {
 		res.status(400).send({ error: "can't fetch student data" });
 	}
 });
-
+// search query
 router.post("/students", varifyAdmin, async (req, res) => {
 	const query = new RegExp(req.body.query, "i");
 	try {
@@ -67,6 +67,15 @@ router.post("/students", varifyAdmin, async (req, res) => {
 		res.status(400).send({ error: "can't fetch student data" });
 	}
 });
+router.delete("/students/:id", varifyAdmin, async (req, res) => {
+	try {
+		const result = await Student.deleteOne({ _id: req.params.id });
+		res.json(result);
+	} catch (err) {
+		res.status(400).json({ error: "can't delete record" });
+	}
+	// console.log("delete method called: " + req.params.id);
+});
 
 router.get("/jobs", varifyAdmin, async (req, res) => {
 	try {
@@ -76,6 +85,7 @@ router.get("/jobs", varifyAdmin, async (req, res) => {
 		res.status(400).send({ error: "can't fetch jobs data" });
 	}
 });
+// search query
 router.post("/jobs", varifyAdmin, async (req, res) => {
 	const query = new RegExp(req.body.query, "i");
 	try {
@@ -114,7 +124,7 @@ router.get("/jobapplications", varifyAdmin, async (req, res) => {
 		res.status(400).send({ error: "can't fetch job applications data" });
 	}
 });
-
+// search query
 router.post("/jobapplications", varifyAdmin, async (req, res) => {
 	const query = new RegExp(req.body.query, "i");
 	try {
@@ -144,6 +154,7 @@ router.get("/approvedjobs", varifyAdmin, async (req, res) => {
 		res.status(400).send({ error: "can't fetch job approval data" });
 	}
 });
+// search query
 router.post("/approvedjobs", varifyAdmin, async (req, res) => {
 	const query = new RegExp(req.body.query, "i");
 	try {

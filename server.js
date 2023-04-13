@@ -11,6 +11,7 @@ require("./db/config");
 // import api routes
 const adminRoute = require("./routes/admin");
 const adminFetchRoute = require("./routes/adminFetch");
+const adminAddRoute = require("./routes/adminAdd");
 const studentRoute = require("./routes/student");
 const studentFetchRoute = require("./routes/studentFetch");
 
@@ -22,10 +23,11 @@ app.use(express.json());
 // api routes
 app.use("/api/admin", adminRoute);
 app.use("/api/admin/fetch", adminFetchRoute);
+app.use("/api/admin/add", adminAddRoute);
 app.use("/api/student", studentRoute);
 app.use("/api/student/fetch", studentFetchRoute);
 
 // start server
 app.listen(PORT, () => {
-    console.log(`Server started at port ${PORT}`);
+	console.log(`Server started at port ${PORT}`);
 });
