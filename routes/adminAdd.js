@@ -7,9 +7,10 @@ const Student = require("../db/models/Student");
 const { varifyAdmin } = require("./varifyToken");
 
 router.get("/", (req, res) => {
-	res.send("admin add api route");
+	res.json({ msg: "admin add api route" });
 });
 // admin add form api
+// add new student
 router.post("/student", varifyAdmin, async (req, res) => {
 	// console.log(req.body);
 	try {
@@ -22,7 +23,7 @@ router.post("/student", varifyAdmin, async (req, res) => {
 				msg: "Student already exists with this enrollment...",
 			});
 
-		// store the new student
+		// create new student object
 		const newStudent = new Student({
 			enrollmentNo: req.body.enrollmentNo,
 			name: req.body.name,
@@ -31,16 +32,80 @@ router.post("/student", varifyAdmin, async (req, res) => {
 			cpi: req.body.cpi,
 			division: req.body.division,
 		});
-
+		// store the new student
 		const result = await newStudent.save();
 		if (!result)
 			return res
-				.status(500)
+				.status(200)
 				.json({ msg: "database error while adding student data..." });
 
 		res.status(200).json({ msg: "Student added successfully...", result });
 	} catch (err) {
-		res.status(400).json({ msg: "Server error, please try again" });
+		res.status(200).json({ msg: "Server error, please try again" });
+	}
+});
+
+// add new job
+router.post("/job", varifyAdmin, async (req, res) => {
+	// console.log(req.body);
+	try {
+		// create new job object
+		const newJob = new Job({
+			name: req.body.companyName,
+			email: req.body.email,
+			location: req.body.location,
+			jobTitle: req.body.jobTitle,
+			jobDescription: req.body.jobDescription,
+			hiringStatus: req.body.hiringStatus,
+		});
+		// Store new record to Database
+		const result = await newJob.save();
+		if (!result)
+			return res
+				.status(200)
+				.json({ msg: "database error while adding job data..." });
+
+		res.status(200).json({ msg: "Job added successfully...", result });
+	} catch (err) {
+		res.status(200).json({ msg: "Server error, please try again" });
+	}
+});
+router.post("/approvejob", varifyAdmin, async (req, res) => {
+	try {
+		const applicationId = req.body.applicationid;
+		// find job application
+		const jobApplication = await AppliedJob.findById(applicationId);
+		if (!jobApplication) {
+			return res.status(200).json({ msg: "application not found" });
+		}
+
+		// update job application
+		await AppliedJob.updateOne(
+			{ _id: applicationId },
+			{ $set: { approved: true } },
+			{ upsert: true },
+			function (err) {
+				return res.json({ msg: "error in updating job application" });
+			}
+		);
+
+		// create approved job object
+		const newApprovedJob = new ApprovedJob({
+			name: jobApplication.name,
+			email: jobApplication.email,
+			jobId: jobApplication.jobId,
+			studentemail: jobApplication.studentemail,
+			location: jobApplication.location,
+			jobTitle: jobApplication.jobTitle,
+			jobDescription: jobApplication.jobDescription,
+			hiringStatus: jobApplication.hiringStatus,
+		});
+		// saving new recoard to database
+		const result = await newApprovedJob.save();
+
+		res.status(200).json({ msg: "Job Approved Successfully..." });
+	} catch (err) {
+		res.status(200).json({ msg: "server error" });
 	}
 });
 

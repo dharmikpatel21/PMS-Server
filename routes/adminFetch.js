@@ -118,7 +118,7 @@ router.delete("/jobs/:id", varifyAdmin, async (req, res) => {
 
 router.get("/jobapplications", varifyAdmin, async (req, res) => {
 	try {
-		const jobapplications = await AppliedJob.find({});
+		const jobapplications = await AppliedJob.find({ approved: false });
 		res.send(jobapplications);
 	} catch (err) {
 		res.status(400).send({ error: "can't fetch job applications data" });
