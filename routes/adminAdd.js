@@ -4,7 +4,9 @@ const AppliedJob = require("../db/models/AppliedJob");
 const ApprovedJob = require("../db/models/ApprovedJob");
 const Job = require("../db/models/Job");
 const Student = require("../db/models/Student");
+const bcrypt = require("bcryptjs");
 const { varifyAdmin } = require("./varifyToken");
+const { registerValidation } = require("../validation");
 
 router.get("/", (req, res) => {
 	res.json({ msg: "admin add api route" });
@@ -14,24 +16,40 @@ router.get("/", (req, res) => {
 router.post("/student", varifyAdmin, async (req, res) => {
 	// console.log(req.body);
 	try {
+		// validate data
+		const { error } = registerValidation({
+			name: req.body.name,
+			email: req.body.email,
+			password: req.body.password,
+		});
+		if (error) {
+			return res
+				.status(200)
+				.send({ msg: error.details[0].message, loginFlag: false });
+		}
 		// check for student in db
 		const exist = await Student.findOne({
 			enrollmentNo: req.body.enrollmentNo,
 		});
 		if (exist)
 			return res.status(200).json({
-				msg: "Student already exists with this enrollment...",
+				msg: "Student already exists with this enrollment No.",
 			});
 
+		// hash password
+		const salt = await bcrypt.genSalt(10);
+		const hashedPassword = await bcrypt.hash(req.body.password, salt);
 		// create new student object
 		const newStudent = new Student({
 			enrollmentNo: req.body.enrollmentNo,
 			name: req.body.name,
 			email: req.body.email,
+			password: hashedPassword,
 			department: req.body.department,
 			cpi: req.body.cpi,
 			division: req.body.division,
 		});
+
 		// store the new student
 		const result = await newStudent.save();
 		if (!result)

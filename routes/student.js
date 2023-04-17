@@ -1,11 +1,11 @@
 const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const StudentCredentials = require("../db/models/StudentCredentials");
 const Job = require("../db/models/Job");
 const AppliedJob = require("../db/models/AppliedJob");
 const { registerValidation, loginValidation } = require("../validation");
 const { varifyStudent } = require("./varifyToken");
+const Student = require("../db/models/Student");
 
 router.get("/", (req, res) => {
 	res.json({ msg: "student API route" });
@@ -19,7 +19,7 @@ router.post("/login", async (req, res) => {
 			.status(200)
 			.send({ error: error.details[0].message, loginFlag: false });
 	// check user in db
-	const student = await StudentCredentials.findOne({ email: req.body.email });
+	const student = await Student.findOne({ email: req.body.email });
 	if (!student)
 		return res
 			.status(200)
