@@ -12,6 +12,7 @@ require("./db/config");
 const adminRoute = require("./routes/admin");
 const adminFetchRoute = require("./routes/adminFetch");
 const adminAddRoute = require("./routes/adminAdd");
+const adminUpdateRoute = require("./routes/adminUpdate");
 const studentRoute = require("./routes/student");
 const studentFetchRoute = require("./routes/studentFetch");
 
@@ -24,6 +25,7 @@ app.use(express.json());
 app.use("/api/admin", adminRoute);
 app.use("/api/admin/fetch", adminFetchRoute);
 app.use("/api/admin/add", adminAddRoute);
+app.use("/api/admin/update", adminUpdateRoute);
 app.use("/api/student", studentRoute);
 app.use("/api/student/fetch", studentFetchRoute);
 

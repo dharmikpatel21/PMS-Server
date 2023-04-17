@@ -46,6 +46,22 @@ router.get("/students", varifyAdmin, async (req, res) => {
 		res.status(400).send({ error: "can't fetch student data" });
 	}
 });
+router.get("/students/:id", varifyAdmin, async (req, res) => {
+	try {
+		const student = await Student.findById(req.params.id);
+		res.send(student);
+	} catch (err) {
+		res.status(400).send({ msg: "can't fetch student data" });
+	}
+});
+router.get("/students/email/:email", varifyAdmin, async (req, res) => {
+	try {
+		const student = await Student.findOne({ email: req.params.email });
+		res.send(student);
+	} catch (err) {
+		res.status(400).send({ msg: "can't fetch student data" });
+	}
+});
 // search query
 router.post("/students", varifyAdmin, async (req, res) => {
 	const query = new RegExp(req.body.query, "i");
@@ -83,6 +99,15 @@ router.get("/jobs", varifyAdmin, async (req, res) => {
 		res.send(jobs);
 	} catch (err) {
 		res.status(400).send({ error: "can't fetch jobs data" });
+	}
+});
+// find job by id
+router.get("/jobs/:id", varifyAdmin, async (req, res) => {
+	try {
+		const job = await Job.findById(req.params.id);
+		res.send(job);
+	} catch (err) {
+		res.status(400).send({ msg: "can't fetch jobs data" });
 	}
 });
 // search query
