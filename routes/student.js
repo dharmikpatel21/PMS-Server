@@ -48,7 +48,6 @@ router.post("/login", async (req, res) => {
 
 router.post("/apply", varifyStudent, async (req, res) => {
 	const jobId = req.body.jobId;
-	// res.json({ msg: "applied: " + jobId });
 	try {
 		const appliedjob = await AppliedJob.findOne({ jobId: jobId });
 		if (appliedjob) {
@@ -67,7 +66,6 @@ router.post("/apply", varifyStudent, async (req, res) => {
 		if (!job) {
 			return res.status(200).json({ msg: "No such a job found" });
 		}
-		// console.log(job);
 		const newAppliedJob = new AppliedJob({
 			studentemail: req.body.student.email,
 			jobId: _id,
@@ -84,6 +82,35 @@ router.post("/apply", varifyStudent, async (req, res) => {
 		res.status(200).json({
 			msg: "error! can't apply for job, try again leter",
 		});
+	}
+});
+
+router.post("/profile/:id", varifyStudent, async (req, res) => {
+	try {
+		const { email, password } = req.body.data;
+		if (!email && !password) return res.json({ msg: "Already Updated" });
+		if (password) {
+			const salt = await bcrypt.genSalt(10);
+			const hashedpassword = await bcrypt.hash(password, salt);
+			req.body.data.password = hashedpassword;
+			console.log(hashedpassword, req.body.data);
+		}
+		await Student.updateOne(
+			{ _id: req.params.id },
+			{
+				$set: req.body.data,
+			},
+			{ upsert: true },
+			function (err) {
+				return res.status(200).json({
+					msg: "error while updating student Profile, please try again",
+				});
+			}
+		);
+
+		res.status(200).json({ msg: "Profile Updated successfully..." });
+	} catch (err) {
+		res.status(200).json({ msg: "Server error, please try again" });
 	}
 });
 

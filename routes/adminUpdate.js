@@ -28,9 +28,9 @@ router.post("/student/:id", varifyAdmin, async (req, res) => {
 			{ _id: req.params.id },
 			{
 				$set: {
-					enrollmentNo: req.body.enrollmentNo,
+					// enrollmentNo: req.body.enrollmentNo,
+					// email: req.body.email,
 					name: req.body.name,
-					email: req.body.email,
 					department: req.body.department,
 					cpi: req.body.cpi,
 					division: req.body.division,
