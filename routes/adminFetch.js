@@ -23,12 +23,12 @@ router.get("/dashboard", varifyAdmin, async (req, res) => {
 			},
 			{
 				_id: 2,
-				label: "Open Jobs",
+				label: "Total Jobs",
 				value: jobCount,
 			},
 			{
 				_id: 3,
-				label: "Students Hired",
+				label: "Approved Jobs",
 				value: approvedjobCount,
 			},
 		];

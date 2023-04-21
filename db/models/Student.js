@@ -8,6 +8,7 @@ const studentSchema = mongoose.Schema({
 	department: { type: String, required: true },
 	cpi: { type: Number, required: true },
 	division: { type: String, required: true },
+	resumeLink: { type: String },
 	registeredAt: { type: Date, default: Date.now() },
 });
 

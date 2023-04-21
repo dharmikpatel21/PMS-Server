@@ -2,14 +2,49 @@ const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Job = require("../db/models/Job");
+const multer = require("multer");
+
 const AppliedJob = require("../db/models/AppliedJob");
 const { registerValidation, loginValidation } = require("../validation");
 const { varifyStudent } = require("./varifyToken");
 const Student = require("../db/models/Student");
 
-router.get("/", (req, res) => {
-	res.json({ msg: "student API route" });
+// upload resume using multer
+const storage = multer.diskStorage({
+	destination: function (req, file, cb) {
+		return cb(null, "uploads/");
+	},
+	filename: function (req, file, cb) {
+		return cb(null, file.originalname);
+	},
 });
+
+const upload = multer({ storage });
+
+router.post(
+	"/upload/resume/:id",
+	varifyStudent,
+	upload.single("myFile"),
+	async (req, res) => {
+		// console.log(req.body);
+		// console.log(req.file);
+		try {
+			await Student.updateOne(
+				{ _id: req.params.id },
+				{
+					$set: { resumeLink: `uploads/${req.file.originalname}` },
+				},
+				{ upsert: true },
+				function (err) {
+					return res.status(200).json({
+						msg: "error while updating student Profile, please try again",
+					});
+				}
+			);
+		} catch (err) {}
+		res.status(200).json({ msg: "Resume uploaded" });
+	}
+);
 
 router.post("/login", async (req, res) => {
 	// validate data
