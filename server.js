@@ -1,7 +1,6 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const multer = require("multer");
 const app = express();
 const PORT = process.env.PORT || 5001;
 
@@ -31,7 +30,13 @@ app.use("/api/admin/update", adminUpdateRoute);
 app.use("/api/student", studentRoute);
 app.use("/api/student/fetch", studentFetchRoute);
 app.use("/uploads", express.static("uploads"));
-app.use(express.static(`uploads`));
+app.use(express.static("uploads"));
+app.use("/build", express.static("build"));
+app.use(express.static("build"));
+
+app.get("*", (req, res) => {
+	res.sendFile(`build/index.html`);
+});
 
 // start server
 app.listen(PORT, () => {

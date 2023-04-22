@@ -32,7 +32,13 @@ router.get("/dashboard", varifyStudent, async (req, res) => {
 router.get("/jobs", varifyStudent, async (req, res) => {
 	try {
 		const jobs = await Job.find({});
-		res.json(jobs);
+		const approvedJobs = await ApprovedJob.find({
+			studentemail: req.body.student.email,
+		});
+		const appliedJobs = await AppliedJob.find({
+			studentemail: req.body.student.email,
+		});
+		res.json({ jobs, approvedJobs, appliedJobs });
 	} catch (err) {
 		res.status(400).json({ error: "can't fetch students jobs data" });
 	}
@@ -58,10 +64,10 @@ router.post("/jobs", varifyStudent, async (req, res) => {
 });
 router.get("/appliedjobs", varifyStudent, async (req, res) => {
 	try {
-		const appliedJob = await AppliedJob.find({
+		const appliedJobs = await AppliedJob.find({
 			studentemail: req.body.student.email,
 		});
-		res.json(appliedJob);
+		res.json(appliedJobs);
 	} catch (err) {
 		res.status(400).json({
 			error: "can't fetch student's applied jobs data",
@@ -71,7 +77,7 @@ router.get("/appliedjobs", varifyStudent, async (req, res) => {
 router.post("/appliedjobs", varifyStudent, async (req, res) => {
 	const query = new RegExp(req.body.query, "i");
 	try {
-		const appliedJob = await AppliedJob.find({
+		const appliedJobs = await AppliedJob.find({
 			$and: [
 				{ studentemail: req.body.student.email },
 				{
@@ -83,7 +89,7 @@ router.post("/appliedjobs", varifyStudent, async (req, res) => {
 				},
 			],
 		});
-		res.json(appliedJob);
+		res.json(appliedJobs);
 	} catch (err) {
 		res.status(400).json({
 			error: "can't fetch student's applied jobs data",
@@ -103,10 +109,10 @@ router.delete("/appliedjobs/:id", varifyStudent, async (req, res) => {
 
 router.get("/approvedjobs", varifyStudent, async (req, res) => {
 	try {
-		const approvedJob = await ApprovedJob.find({
+		const approvedJobs = await ApprovedJob.find({
 			studentemail: req.body.student.email,
 		});
-		res.json(approvedJob);
+		res.json(approvedJobs);
 	} catch (err) {
 		res.status(400).json({
 			error: "can't fetch student's approved jobs data",
@@ -117,7 +123,7 @@ router.get("/approvedjobs", varifyStudent, async (req, res) => {
 router.post("/approvedjobs", varifyStudent, async (req, res) => {
 	const query = new RegExp(req.body.query, "i");
 	try {
-		const appliedJob = await ApprovedJob.find({
+		const approvedJobs = await ApprovedJob.find({
 			$and: [
 				{ studentemail: req.body.student.email },
 				{
@@ -129,7 +135,7 @@ router.post("/approvedjobs", varifyStudent, async (req, res) => {
 				},
 			],
 		});
-		res.json(appliedJob);
+		res.json(approvedJobs);
 	} catch (err) {
 		res.status(400).json({
 			error: "can't fetch student's approved jobs data",
