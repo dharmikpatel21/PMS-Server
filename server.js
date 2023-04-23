@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 const PORT = process.env.PORT || 5001;
+const path = require("path");
 
 // import db
 require("./db/config");
@@ -20,6 +21,8 @@ const studentFetchRoute = require("./routes/studentFetch");
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, "uploads")));
+app.use(express.static(path.join(__dirname, "build")));
 
 // route middleware
 // api routes
@@ -29,13 +32,12 @@ app.use("/api/admin/add", adminAddRoute);
 app.use("/api/admin/update", adminUpdateRoute);
 app.use("/api/student", studentRoute);
 app.use("/api/student/fetch", studentFetchRoute);
-app.use("/uploads", express.static("uploads"));
-app.use(express.static("uploads"));
-app.use("/build", express.static("build"));
-app.use(express.static("build"));
 
-app.get("*", (req, res) => {
-	res.sendFile(`build/index.html`);
+const buildPath = path.resolve(__dirname, "build");
+const indexPath = path.resolve(buildPath, "index.html");
+
+app.get("/*", (req, res) => {
+	res.sendFile(indexPath);
 });
 
 // start server
